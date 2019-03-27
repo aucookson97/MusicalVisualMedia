@@ -32,9 +32,8 @@ DEFAULT_KEY = [C, CS, D, DS, E, F, FS, G, GS, A, AS, B]
 
 KEY = CMAJ
 
-SILENT_CUTOFF = 10
+SILENT_CUTOFF = 12
 
-note_lengths = []
 
 def round_note(note):
     if noteInKey(note):
@@ -142,7 +141,7 @@ def generate_midi_track(file_name, notes):
     track.append(midi.EndOfTrackEvent(tick=1))
     midi.write_midifile(file_name, pattern)
 
-def downsample_arr(notes, factor):
+def downsample_notes(notes, factor):
     new_notes = []
     remainder = len(notes) % factor
 
@@ -243,27 +242,20 @@ def motion_to_notes(motion):
             velocity = 0
         else:
             velocity = 100
-        print (m)
-        if (m < 20):
-            note_lengths.append(1.0)
-        elif (m < 40):
-            note_lengths.append(.5)
-        elif (m < 60):
-            note_lengths.append(.25)
-        else:
-            note_lengths.append(.125)
-        pitch = int(36 + (m / largest) * 48)
-        print ("\t{}".format(pitch))
+        #print (m)
+        pitch = int(36 + (m / largest) * 72)
+       # print ("\t{}".format(pitch))
         note = round_note([pitch, velocity])
-        print ("\t{}".format(note[0]))
+        #print ("\t{}".format(note[0]))
         notes.append(note)
 
     return notes
 
 if __name__=="__main__":
-    motion = process_video_motion(MEDIA_FOLDER + '\\videos\\drunken_master_short.mp4')
+    motion = process_video_motion(MEDIA_FOLDER + '\\videos\\netflix_short.mp4')
     notes = motion_to_notes(motion)
-    generate_midi_track("drunken_master_test.mid", notes)
+    new_notes = downsample_notes(notes, 4)
+    generate_midi_track(MEDIA_FOLDER + "\\audio\\" + "drunken_master_netflix_short.mid", new_notes)
     #process_all_images_sin()
     #notes = process_video(MEDIA_FOLDER + '\\videos\\fools_gold.mp4')
    # new_notes = downsample_notes(notes, 8)
